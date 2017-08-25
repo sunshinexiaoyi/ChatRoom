@@ -13,10 +13,6 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".LayoutActivity"
-            android:configChanges="orientation|screenSize" />
-        <activity android:name=".BaseActivity" />
-        <activity
             android:name=".LoginActivity"
             android:windowSoftInputMode="adjustPan">
 
