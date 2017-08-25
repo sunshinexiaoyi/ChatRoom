@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/border_login"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+
+    android:paddingBottom="5dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"><!--解决edit clearFocus无效问题-->
+
+    <gos.wxy.view.EditTextWithIcon
+        android:id="@+id/editUser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/user"
+        android:drawableRight="@drawable/clear"
+
+        android:ems="10"
+        android:hint="用户名"
+        android:inputType="textPersonName"
+        android:paddingLeft="20dp"
+        android:textColorHint="@color/blue" />
+
+    <gos.wxy.view.EditTextWithIcon
+        android:id="@+id/editPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/password"
+        android:drawableRight="@drawable/clear"
+        android:ems="10"
+        android:hint="密码"
+        android:inputType="textPassword"
+        android:paddingLeft="20dp"
+        android:textColorHint="@color/blue" />
+
+    <Button
+        android:id="@+id/buttonLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/button"
+        android:text="登陆"
+        android:textSize="20sp" />
+
+
+</LinearLayout>

@@ -1,4 +1,4 @@
-package gos.myapplication;
+package gos.wxy;
 
 import org.junit.Test;
 
