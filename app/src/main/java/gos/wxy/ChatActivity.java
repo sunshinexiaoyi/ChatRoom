@@ -35,11 +35,16 @@ public class ChatActivity extends AppCompatActivity {
     ListView chatListView;
     ChatItemAdapter chatItemAdapter = new ChatItemAdapter(this);
 
+
+    /**
+     * 事件接收
+     * @param msg
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void recvEvent(EventMsg msg){
         if(msg.getEventMode() == EnumEventMode.IN){
             switch (msg.getCommand()){
-                case COM_CHAT_SEND:
+                case COM_CHAT_SEND:     //聊天信息
                     updateChatView(JsonParse.message(msg.getData()));
                     break;
             }
@@ -75,13 +80,13 @@ public class ChatActivity extends AppCompatActivity {
 
                 Message message = new Message(sendMsg);
                 sendMessage(message);
-                //发送操作
 
                 //chatItemAdapter.addChatItem(new ChatItem(sendMsg, EnumChatType.SELF));
             }
         });
 
-        chatInput.addTextChangedListener(new TextWatcher() {
+
+        chatInput.addTextChangedListener(new TextWatcher() {//当输入长度大于0时，按钮使能
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -105,11 +110,19 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * 更新聊天界面
+     * @param message
+     */
     private void updateChatView(Message message){
         chatItemAdapter.addChatItem(new ChatItem(message.getMessage(), EnumChatType.SELF));
 
     }
 
+    /**
+     * 发送聊天信息
+     * @param message
+     */
     private void sendMessage(Message message){
         Event.send(new EventMsg(COM_CHAT_SEND, JSON.toJSONString(message),EnumEventMode.OUT));
     }

@@ -47,10 +47,7 @@ public class User {
         }
 
         User user = (User)o;
-        if(user.getName().equals(name)&&user.getPassword().equals(password)){
-            return true;
-        }
 
-        return false;
+        return (user.getName().equals(name) && user.getPassword().equals(password));
     }
 }

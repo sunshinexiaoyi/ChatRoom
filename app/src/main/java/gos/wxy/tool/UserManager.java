@@ -24,6 +24,7 @@ class UserManager{
         users.add(new User("小花"));
         users.add(new User("小红"));
         users.add(new User("小白"));
+        users.add(new User("q","q"));
     }
     public static UserManager getInstance(){
         return userManager;
@@ -41,10 +42,25 @@ class UserManager{
     public void remove(Socket socket){
         SocketUser socketUser = findSocketUser(socket);
         if(null != socketUser){
-            socketUsers.remove(socketUser);
+            remove(socketUser);
         }
     }
 
+    public void remove(SocketUser socketUser){
+        socketUsers.remove(socketUser);
+        System.out.println(socketUser.getUser().getName()+PrintInfo.INFO_REMOVE);
+    }
+
+    public SocketUser findSocketUser(User user){
+        for (SocketUser s :
+                socketUsers) {
+            if (user.equals(s.getUser())) {
+                return s;
+            }
+        }
+
+        return null;
+    }
 
     public SocketUser findSocketUser(Socket socket){
         for (SocketUser s :
@@ -63,7 +79,12 @@ class UserManager{
      * @param user
      * @return
      */
-    public boolean userIsExists(User user){
+    public boolean socketUserIsExists(User user){
+
+        return (null != findSocketUser(user));
+    }
+
+    public boolean checkIsSuccess(User user){
         for (User u :
                 users) {
             if (u.equals(user)){

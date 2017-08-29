@@ -25,6 +25,10 @@ public class ConnectActivity extends AppCompatActivity {
 
     Net net = new Net("192.168.100.101",17728); //默认服务器地址
 
+    /**
+     * 事件接收
+     * @param msg
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void recvEvent(EventMsg msg){
         if(msg.getEventMode() == EnumEventMode.IN){

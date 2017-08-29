@@ -81,10 +81,13 @@ class ServerManager{
          */
         private void stopRun(){
             runFlag = false;
+            System.out.println(PrintInfo.INFO_EXIT_THREAD + getId());
         }
 
         @Override
         public void run() {
+            System.out.println(PrintInfo.INFO_START_THREAD + getId());
+
             try{
                 while (runFlag){
                     recv(inputStream);
@@ -94,7 +97,6 @@ class ServerManager{
                     socket.close();
                     if(null != user){
                         userManager.remove(socket);
-                        System.out.println(user.getName()+PrintInfo.INFO_REMOVE);
                     }
 
                     inputStream.close();
@@ -117,8 +119,12 @@ class ServerManager{
                     User recvUser = JsonParse.user(dataPackage.getData());
                     boolean flag = false;
 
+                    if((null != recvUser) && userManager.checkIsSuccess(recvUser)){
+                        if(userManager.socketUserIsExists(recvUser)){
+                            SocketUser existSocketUser  = userManager.findSocketUser(recvUser);
+                            userManager.remove(existSocketUser);
+                        }
 
-                    if((null!=recvUser) && userManager.userIsExists(recvUser)){
                         Message msg = new Message(recvUser.getName()+PrintInfo.INFO_ONLINE);
                         User systemUser = new User(PrintInfo.SYSTEM_USER);
                         sendAllUser(systemUser,msg);
@@ -174,11 +180,12 @@ class ServerManager{
                     }
                     Message sendMsg = new Message(name+":"+msg.getMessage());
                     DataPackage send = new DataPackage(CommandType.COM_CHAT_SEND,JSON.toJSONString(sendMsg));
-                    System.out.println("给"+socketUser.getUser()+"发送信息："+sendMsg.getMessage());
+                    System.out.println("给"+socketUser.getUser().getName()+"发送信息："+sendMsg.getMessage());
                     out.write(send.toByte());
                 }
                 catch (IOException e){
                     e.printStackTrace();
+                    userManager.remove(socketUser);     //失败移除
                 }
             }
         }
@@ -193,6 +200,7 @@ class ServerManager{
                     outputStream.write(data);
                 }catch (IOException ex){
                     ex.printStackTrace();
+                    stopRun();
                 }
             }
         }
@@ -205,6 +213,12 @@ class ServerManager{
             try{
                 byte[] head = new byte[DataPackage.headLen];
                 int len = inputStream.read(head);   //接收头部段
+
+                if(-1 == len){  //tcp在接收到长度为-1时，应该判断客户端已经断开
+                    System.out.println(PrintInfo.ERROR_RECV_LEN);
+                    stopRun();
+                }
+
                 if(len != head.length){
                     return;
                 }

@@ -24,6 +24,7 @@ import gos.wxy.base.User;
 import gos.wxy.db.MyDBOpenHelper;
 import gos.wxy.db.SharedDb;
 import gos.wxy.enums.EnumEventMode;
+import gos.wxy.tool.DataPackage;
 import gos.wxy.tool.Event;
 import gos.wxy.tool.JsonParse;
 import gos.wxy.view.EditTextWithIcon;
@@ -45,6 +46,10 @@ public class LoginActivity extends AppCompatActivity  implements CompoundButton.
     SharedDb sharedDb = new SharedDb(this);
     MyDBOpenHelper db;
 
+    /**
+     * 事件接收
+     * @param msg
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void recvEvent(EventMsg msg){
         if(msg.getEventMode() == EnumEventMode.IN){
@@ -104,13 +109,16 @@ public class LoginActivity extends AppCompatActivity  implements CompoundButton.
 
     private void initViewData(){
         initLoginSetting();
-        initDB();
+        //initDB();
     }
 
     private void initDB() {
         db = new MyDBOpenHelper(this,"user.db",null,1);
     }
 
+    /**
+     * 初始化登陆设置
+     */
     private void initLoginSetting(){
         LoginSetting loginSetting = sharedDb.getLoginSetting();
         if(null != loginSetting){
@@ -191,10 +199,19 @@ public class LoginActivity extends AppCompatActivity  implements CompoundButton.
         }
     }
 
+    /**
+     * 发送登陆信息
+     * @param user
+     */
     private void sendLogin(User user){
         Event.send(new EventMsg(COM_CHECK_LOGIN, JSON.toJSONString(user),EnumEventMode.OUT));
     }
 
+
+    /**
+     * 保存设置信息
+     * @param user
+     */
     private void saveSetInfo(User user){
         LoginSetting loginSetting = getLoginSettingFromView();
         sharedDb.setLoginSetting(loginSetting);

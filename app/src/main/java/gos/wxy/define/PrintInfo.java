@@ -23,6 +23,9 @@ public interface PrintInfo {
     String ERROR_SOCKET= "网络连接异常:";
     String ERROR_PARSE_DATA_FAILED = "解析数据失败";
 
+    String ERROR_RECV_LEN = "接收长度为-1，结束！";
+
+
     String SUCCESS_ADD_USER= "添加用户成功!";
     String SUCCESS_LOGIN= "登陆成功!";
     String SUCCESS_CONNECT= "连接成功!";
@@ -43,6 +46,9 @@ public interface PrintInfo {
     String INFO_RESET= "重置系统状态!";
     String INFO_INPUT_LOGOUT = "可输入 cmd:11 登出!";
     String INFO_LOGOUT = "退出登陆";
+
+    String INFO_EXIT_THREAD = "结束线程";
+    String INFO_START_THREAD = "开始线程";
 
 
     String INFO_ME = "我";

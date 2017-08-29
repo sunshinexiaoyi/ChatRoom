@@ -93,7 +93,6 @@ class ServerManager{
                     socket.close();
                     if(null != user){
                         userManager.remove(socket);
-                        System.out.println(user.getName()+PrintInfo.INFO_REMOVE);
                     }
 
                     inputStream.close();
@@ -165,6 +164,7 @@ class ServerManager{
             ArrayList<SocketUser> socketUsers = userManager.getSocketUsers();
             for (SocketUser  socketUser:
                     socketUsers) {
+
                 try{
                     OutputStream out =  socketUser.getSocket().getOutputStream();
                     String name = user.getName();
@@ -178,6 +178,7 @@ class ServerManager{
                 }
                 catch (IOException e){
                     e.printStackTrace();
+                    userManager.remove(socketUser);
                 }
             }
         }

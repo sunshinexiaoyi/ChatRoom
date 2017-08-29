@@ -1,6 +1,7 @@
 package gos.wxy.tool;
 
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 import gos.wxy.exception.DataPackageException;
@@ -10,7 +11,7 @@ import gos.wxy.exception.DataPackageException;
  * Created by wuxy on 2017/7/31.
  */
 
-public class DataPackage {
+public class DataPackage implements Serializable{
     public  final static int headLen = 5;
 
     private byte command;

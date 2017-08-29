@@ -40,8 +40,13 @@ class UserManager{
     public void remove(Socket socket){
         SocketUser socketUser = findSocketUser(socket);
         if(null != socketUser){
-            socketUsers.remove(socketUser);
+            remove(socketUser);
         }
+    }
+
+    public void remove(SocketUser socketUser){
+        socketUsers.remove(socketUser);
+        System.out.println(socketUser.getUser().getName()+PrintInfo.INFO_REMOVE);
     }
 
 
