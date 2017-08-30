@@ -1,7 +1,7 @@
 package gos.wxy;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -18,14 +18,12 @@ import gos.wxy.adapter.ChatItemAdapter;
 import gos.wxy.base.ChatItem;
 import gos.wxy.base.EventMsg;
 import gos.wxy.base.Message;
-
 import gos.wxy.enums.EnumChatType;
 import gos.wxy.enums.EnumEventMode;
 import gos.wxy.tool.Event;
 import gos.wxy.tool.JsonParse;
 
 import static gos.wxy.define.CommandType.COM_CHAT_SEND;
-import static gos.wxy.define.CommandType.COM_SYSTEM_RESPOND;
 
 public class ChatActivity extends AppCompatActivity {
     private final  String TAG = this.getClass().getSimpleName();
@@ -46,6 +44,8 @@ public class ChatActivity extends AppCompatActivity {
             switch (msg.getCommand()){
                 case COM_CHAT_SEND:     //聊天信息
                     updateChatView(JsonParse.message(msg.getData()));
+
+
                     break;
             }
         }
