@@ -1,5 +1,7 @@
 package gos.wxy;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,15 +17,26 @@ import gos.wxy.base.EventMsg;
 import gos.wxy.base.Net;
 import gos.wxy.enums.EnumEventMode;
 import gos.wxy.service.ClientService;
+import gos.wxy.tool.BroadcastManager;
 import gos.wxy.tool.Event;
+import gos.wxy.tool.JsonParse;
 
 import static gos.wxy.define.CommandType.*;
+import static gos.wxy.tool.BroadcastManager.*;
 
 
 public class ConnectActivity extends AppCompatActivity {
     final String TAG = this.getClass().getSimpleName();
 
     Net net = new Net("192.168.100.101",17728); //默认服务器地址
+
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            EventMsg msg = getBroadcastMsg(intent);
+            parseEventMsg(msg);
+        }
+    };
 
     /**
      * 事件接收
@@ -32,23 +45,32 @@ public class ConnectActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void recvEvent(EventMsg msg){
         if(msg.getEventMode() == EnumEventMode.IN){
-            switch (msg.getCommand()){
-                case COM_CONNECT_ATTACH:
-                    startLoginActivity();
-                    break;
-                case COM_CONNECT_DETACH:
-                    Toast.makeText(this, "连接失败", Toast.LENGTH_SHORT).show();
-                    break;
-            }
+            parseEventMsg(msg);
         }
     }
 
+    private void parseEventMsg(EventMsg msg){
+        Log.i(TAG,"getCommand:"+msg.getCommand());
+
+        switch (msg.getCommand()){
+            case COM_SYSTEM_SERVICE_START:
+                sendConnect();
+                break;
+            case COM_CONNECT_ATTACH:
+                startLoginActivity();
+                break;
+            case COM_CONNECT_DETACH:
+                Toast.makeText(this, "连接失败", Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect);
 
-        Event.register(this);
+        //Event.register(this);
+        registerReceiver(broadcastReceiver,FILTER_ACTIVITY);
 
         init();
     }
@@ -56,12 +78,12 @@ public class ConnectActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Event.unregister(this);
+        //Event.unregister(this);
+        unregisterReceiver(broadcastReceiver);
     }
 
     void init(){
         startNetService();
-        sendConnect();
     }
 
     void startNetService(){
@@ -71,16 +93,22 @@ public class ConnectActivity extends AppCompatActivity {
     }
 
     void startLoginActivity(){
+        Log.i(TAG,"startLoginActivity");
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+        finish();
+
     }
 
 
     void sendConnect(){
         Log.i(TAG,"sendConnect");
-        Event.sendSticky(new EventMsg(COM_CONNECT, JSON.toJSONString(net),EnumEventMode.OUT));
+        eventSend(new EventMsg(COM_CONNECT, JSON.toJSONString(net),EnumEventMode.OUT));
     }
 
-
+    private void eventSend(EventMsg msg){
+        //Event.send(msg);
+        sendBroadcast(getIntentService(msg));
+    }
 
 }

@@ -15,7 +15,6 @@ import gos.wxy.base.User;
 
 public class JsonParse {
     public static User user(String jsonData){
-        System.out.println("jsonData:"+jsonData);
         return JSON.parseObject(jsonData,User.class);
     }
 

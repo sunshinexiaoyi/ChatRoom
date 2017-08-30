@@ -1,9 +1,13 @@
 package gos.wxy;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,7 +29,10 @@ import gos.wxy.tool.Event;
 import gos.wxy.tool.JsonParse;
 
 import static gos.wxy.define.CommandType.COM_CHAT_SEND;
+import static gos.wxy.define.CommandType.COM_CHECK_LOGOUT;
 import static gos.wxy.define.CommandType.COM_SYSTEM_RESPOND;
+import static gos.wxy.tool.BroadcastManager.getBroadcastMsg;
+import static gos.wxy.tool.BroadcastManager.*;
 
 public class ChatActivity extends AppCompatActivity {
     private final  String TAG = this.getClass().getSimpleName();
@@ -35,6 +42,13 @@ public class ChatActivity extends AppCompatActivity {
     ListView chatListView;
     ChatItemAdapter chatItemAdapter = new ChatItemAdapter(this);
 
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            EventMsg msg = getBroadcastMsg(intent);
+            parseEventMsg(msg);
+        }
+    };
 
     /**
      * 事件接收
@@ -43,11 +57,15 @@ public class ChatActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void recvEvent(EventMsg msg){
         if(msg.getEventMode() == EnumEventMode.IN){
-            switch (msg.getCommand()){
-                case COM_CHAT_SEND:     //聊天信息
-                    updateChatView(JsonParse.message(msg.getData()));
-                    break;
-            }
+            parseEventMsg(msg);
+        }
+    }
+
+    private void parseEventMsg(EventMsg msg){
+        switch (msg.getCommand()){
+            case COM_CHAT_SEND:     //聊天信息
+                updateChatView(JsonParse.message(msg.getData()));
+                break;
         }
     }
 
@@ -55,15 +73,19 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        Event.register(this);
+        //Event.register(this);
+        registerReceiver(broadcastReceiver,FILTER_ACTIVITY);
 
         initView();
     }
 
     @Override
     protected void onDestroy() {
+        Log.i(TAG,"onDestroy");
         super.onDestroy();
-        Event.unregister(this);
+        sendLogout();
+        //Event.unregister(this);
+        unregisterReceiver(broadcastReceiver);
     }
 
     private void initView(){
@@ -124,6 +146,19 @@ public class ChatActivity extends AppCompatActivity {
      * @param message
      */
     private void sendMessage(Message message){
-        Event.send(new EventMsg(COM_CHAT_SEND, JSON.toJSONString(message),EnumEventMode.OUT));
+        updateChatView(message);
+        eventSend(new EventMsg(COM_CHAT_SEND, JSON.toJSONString(message),EnumEventMode.OUT));
+    }
+
+    private void eventSend(EventMsg msg){
+        //Event.send(msg);
+        sendBroadcast(getIntentService(msg));
+    }
+
+
+    private void sendLogout(){
+        Log.i(TAG,"COM_CHECK_LOGOUT");
+        eventSend(new EventMsg(COM_CHECK_LOGOUT,EnumEventMode.OUT));
+
     }
 }

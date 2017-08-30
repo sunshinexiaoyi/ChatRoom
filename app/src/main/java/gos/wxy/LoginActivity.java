@@ -1,5 +1,7 @@
 package gos.wxy;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,6 +32,7 @@ import gos.wxy.tool.JsonParse;
 import gos.wxy.view.EditTextWithIcon;
 
 import static gos.wxy.define.CommandType.*;
+import static gos.wxy.tool.BroadcastManager.*;
 
 public class LoginActivity extends AppCompatActivity  implements CompoundButton.OnCheckedChangeListener {
     private final String TAG = this.getClass().getCanonicalName();
@@ -46,6 +49,14 @@ public class LoginActivity extends AppCompatActivity  implements CompoundButton.
     SharedDb sharedDb = new SharedDb(this);
     MyDBOpenHelper db;
 
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            EventMsg msg = getBroadcastMsg(intent);
+            parseEventMsg(msg);
+        }
+    };
+
     /**
      * 事件接收
      * @param msg
@@ -53,19 +64,26 @@ public class LoginActivity extends AppCompatActivity  implements CompoundButton.
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void recvEvent(EventMsg msg){
         if(msg.getEventMode() == EnumEventMode.IN){
-            switch (msg.getCommand()){
-                case COM_SYSTEM_RESPOND:
-                    parseRespond(JsonParse.respond(msg.getData()));
-                    break;
-            }
+            parseEventMsg(msg);
         }
     }
+
+    private void parseEventMsg(EventMsg msg){
+        switch (msg.getCommand()){
+            case COM_SYSTEM_RESPOND:
+                parseRespond(JsonParse.respond(msg.getData()));
+                break;
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        Event.register(this);
+       // Event.register(this);
+
+        registerReceiver(broadcastReceiver,FILTER_ACTIVITY);
 
         initView();
     }
@@ -73,7 +91,9 @@ public class LoginActivity extends AppCompatActivity  implements CompoundButton.
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Event.unregister(this);
+        sendStopService();
+        //Event.unregister(this);
+        unregisterReceiver(broadcastReceiver);
     }
 
     private void initView(){
@@ -204,9 +224,17 @@ public class LoginActivity extends AppCompatActivity  implements CompoundButton.
      * @param user
      */
     private void sendLogin(User user){
-        Event.send(new EventMsg(COM_CHECK_LOGIN, JSON.toJSONString(user),EnumEventMode.OUT));
+        eventSend(new EventMsg(COM_CHECK_LOGIN, JSON.toJSONString(user),EnumEventMode.OUT));
     }
 
+
+    /**
+     * 发送停止服务
+     */
+    private void sendStopService(){
+        Log.i(TAG,"sendStopService");
+        eventSend(new EventMsg(COM_SYSTEM_SERVICE_STOP,EnumEventMode.OUT));
+    }
 
     /**
      * 保存设置信息
@@ -232,6 +260,7 @@ public class LoginActivity extends AppCompatActivity  implements CompoundButton.
      */
     private void parseRespond(Respond respond){
         switch (respond.getCommand()){
+
             case COM_CHECK_LOGIN:
                 if(respond.getFlag()){
                     jumpMainActivity();
@@ -246,6 +275,12 @@ public class LoginActivity extends AppCompatActivity  implements CompoundButton.
         }
 
     }
+
+    private void eventSend(EventMsg msg){
+        //Event.send(msg);
+        sendBroadcast(getIntentService(msg));
+    }
+
 
 }
 

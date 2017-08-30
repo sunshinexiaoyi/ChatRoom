@@ -1,12 +1,14 @@
 package gos.wxy.base;
 
+import java.io.Serializable;
+
 import gos.wxy.enums.EnumEventMode;
 
 /**
  * Created by wuxy on 2017/8/24.
  */
 
-public class EventMsg {
+public class EventMsg implements Serializable{
     private byte command;
     private String data;
     private EnumEventMode eventMode;
