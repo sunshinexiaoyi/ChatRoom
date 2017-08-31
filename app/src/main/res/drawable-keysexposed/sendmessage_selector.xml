@@ -15,6 +15,18 @@
         </shape>
     </item>
 
+    <item android:state_enabled="false">
+        <shape>
+            <solid android:color="#7c7e7c" />
+
+            <corners android:radius="10px" />
+            <padding android:bottom="5dp"
+                android:left="5dp"
+                android:right="5dp"
+                android:top="5dp" />
+        </shape>
+    </item>
+
     <!-- 当组件为未选中状态时 -->
     <item android:state_pressed="false">
         <shape>

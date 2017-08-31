@@ -28,7 +28,7 @@ public class MsgAdapter extends ArrayAdapter<ChatItem> {
 
     private class ViewHolder {
         LinearLayout leftLayout;
-        RelativeLayout rightLayout;
+        LinearLayout rightLayout;
         TextView leftMsg;
         TextView rightMsg;
     }
@@ -55,7 +55,7 @@ public class MsgAdapter extends ArrayAdapter<ChatItem> {
         if(view == null) {
             view = LayoutInflater.from(getContext()).inflate(resourceId, null); // R.layout.chatting_item
             viewHolder.leftLayout = (LinearLayout) view.findViewById(R.id.left_layout);
-            viewHolder.rightLayout = (RelativeLayout) view.findViewById(R.id.right_layout);
+            viewHolder.rightLayout = (LinearLayout) view.findViewById(R.id.right_layout);
             viewHolder.leftMsg = (TextView) view.findViewById(R.id.left_msg);
             viewHolder.rightMsg = (TextView) view.findViewById(R.id.right_msg);
             view.setTag(viewHolder);

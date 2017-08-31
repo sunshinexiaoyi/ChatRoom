@@ -6,10 +6,13 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,10 +36,13 @@ import gos.wxy.enums.EnumEventMode;
 import gos.wxy.tool.Event;
 import gos.wxy.tool.JsonParse;
 
-import static gos.wxy.define.CommandType.*;
+import static gos.wxy.define.CommandType.COM_CHAT_SEND;
+import static gos.wxy.define.CommandType.COM_CHECK_LOGOUT;
 import static gos.wxy.enums.EnumChatType.OTHER;
 import static gos.wxy.enums.EnumChatType.SELF;
-import static gos.wxy.tool.BroadcastManager.*;
+import static gos.wxy.tool.BroadcastManager.FILTER_ACTIVITY;
+import static gos.wxy.tool.BroadcastManager.getBroadcastMsg;
+import static gos.wxy.tool.BroadcastManager.getIntentService;
 
 
 public class ChatActivity extends AppCompatActivity implements OnClickListener{
@@ -45,6 +51,7 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
     private TextView back;
     private ImageView imgAccount;
     private ImageView emoticon;
+    private ImageView emoticonImag;
     private EditText inputText;
     private Button sendMessage;
     private ListView listView;
@@ -122,6 +129,7 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
         back = (TextView) findViewById(R.id.back);
         imgAccount = (ImageView) findViewById(R.id.imgAccount);
         emoticon = (ImageView) findViewById(R.id.emoticon);
+        emoticonImag = (ImageView) findViewById(R.id.emoticonImag);
         inputText = (EditText) findViewById(R.id.inputText);
         sendMessage = (Button) findViewById(R.id.sendMessage);
         listView = (ListView) findViewById(R.id.chatDialog);
@@ -135,6 +143,23 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
 
         msgAdapter = new MsgAdapter(this, R.layout.chatting_item, msgList);
         listView.setAdapter(msgAdapter);
+
+        inputText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(inputText.getText().toString().length() > 0) {
+                    sendMessage.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
 
     }
 
@@ -150,7 +175,13 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
                 Toast.makeText(this, "我是" + name, Toast.LENGTH_SHORT).show();
                 break;
             case R.id.emoticon:
+                Toast.makeText(this, "小情绪", Toast.LENGTH_SHORT).show();
 
+                AlphaAnimation animation = new AlphaAnimation(0.0f, 1.0f);
+                animation.setDuration(5000);
+                animation.setRepeatMode(AlphaAnimation.REVERSE);
+                animation.setRepeatCount(AlphaAnimation.INFINITE);
+                emoticonImag.setAnimation(animation);
                 break;
             case R.id.sendMessage:
                 String content = inputText.getText().toString();
