@@ -1,7 +1,28 @@
 <resources>
-    <string name="app_name">聊天室</string>
+    <string name="app_name">Chatting</string>
 
+    <!--登录界面，MainActivity-->
     <string name="login_setting_remember">记住密码</string>
     <string name="login_setting_auto">自动登陆</string>
     <string name="login_setting_hiding">隐身登陆</string>
+
+    <string name="account">账号</string>
+    <string name="account_hint">请输入账号</string>
+    <string name="account_error">账户不能为空</string>
+    <string name="password">密码</string>
+    <string name="psw_hint">请输入密码</string>
+    <string name="psw_error">密码不能为空</string>
+    <string name="psw_forget">忘记密码 ？</string>
+    <string name="login">登录</string>
+    <string name="login_error">账户不存在或密码错误</string>
+    <string name="login_success">登录成功</string>
+    <string name="checkPsw">记住密码</string>
+    <string name="checkAccount">自动登录</string>
+    <string name="exit">再按一次退出应用</string>
+    <string name="connect">连接服务器失败</string>
+
+    <!--聊天界面-->
+    <string name="title">聊天室</string>
+    <string name="sendMessage">发送</string>
+
 </resources>

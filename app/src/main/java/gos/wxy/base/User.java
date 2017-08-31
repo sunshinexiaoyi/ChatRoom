@@ -38,15 +38,15 @@ public class User {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if(this == o){
+    public boolean equals(Object obj) {
+        if(this == obj){
             return true;
         }
-        if((null == o)&&!(o instanceof User)){
+        if((null == obj)&&!(obj instanceof User)){
             return false;
         }
 
-        User user = (User)o;
+        User user = (User)obj;
 
         return (user.getName().equals(name) && user.getPassword().equals(password));
     }

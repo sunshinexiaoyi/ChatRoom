@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<selector  xmlns:android="http://schemas.android.com/apk/res/android">
+
     <!-- 当组件为选中状态 -->
     <item android:state_pressed="true">
         <shape>
-            <solid android:color="#d3d9d4" />
+            <solid android:color="#09871e" />
             <stroke android:width="0.5px"
-                android:color="#656865" />
+                android:color="#045411" />
             <corners android:radius="10px" />
             <padding android:bottom="5dp"
-                android:left="5dp"
-                android:right="5dp"
-                android:top="5dp" />
+                     android:left="5dp"
+                     android:right="5dp"
+                     android:top="5dp" />
         </shape>
     </item>
 
     <!-- 当组件为未选中状态时 -->
     <item android:state_pressed="false">
         <shape>
-            <solid android:color="#fff" />
-            <stroke android:width="0.5px"
-                android:color="#727372" />
+            <solid android:color="#16da2d" />
+
             <corners android:radius="10px" />
             <padding android:bottom="5dp"
-                android:left="5dp"
-                android:right="5dp"
-                android:top="5dp" />
+                     android:left="5dp"
+                     android:right="5dp"
+                     android:top="5dp" />
         </shape>
     </item>
+
+
 </selector>

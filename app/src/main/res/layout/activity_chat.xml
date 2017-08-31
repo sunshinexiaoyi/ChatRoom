@@ -1,78 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="gos.wxy.ChatActivity">
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:background="@drawable/main_background"
+    android:fitsSystemWindows="true"
+    >
 
-    <RelativeLayout
+    <include
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteY="8dp"
-        tools:layout_editor_absoluteX="8dp">
+        android:layout_height="30dp"
+        layout="@layout/top_title"/>
 
-        <LinearLayout
-            android:id="@+id/layout_show"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/layout_input"
-            android:background="@color/gray_show"
-            android:orientation="vertical">
+    <ListView
+        android:id="@+id/chatDialog"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@null"
+        android:layout_marginTop="10dp"
+        android:scrollbars="vertical"
+        />
 
-            <ListView
-                android:id="@+id/chatListView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/gray_show" />
-        </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:foregroundGravity="center"
+        android:padding="10dp"
+        >
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_above="@+id/layout_input"
-            android:background="@color/gray"
+        <ImageView
+            android:id="@+id/emoticon"
+            android:layout_width="37dp"
+            android:layout_height="37dp"
+            android:layout_gravity="center"
+            android:src="@drawable/emoticon"/>
 
-            >
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_input"
-            android:layout_width="368dp"
+        <EditText
+            android:id="@+id/inputText"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="@color/white"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:maxHeight="1500dp"
+            android:maxLines="7"
+            android:textSize="18sp"
+            android:padding="7dp"
+            />
+
+        <Button
+            android:id="@+id/sendMessage"
+            android:layout_width="50dp"
+            android:layout_height="37dp"
+            android:layout_gravity="center"
+            android:text="@string/sendMessage"
+            android:textSize="17sp"
+            android:textColor="#ffffff"
             android:gravity="center"
-            android:orientation="horizontal"
             android:padding="5dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="8dp">
+            android:background="@drawable/sendmessage_selector"/>
 
-            <EditText
-                android:id="@+id/chatInput"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:background="@drawable/border_login"
-                android:ems="10"
-                android:hint="请输入聊天信息"
-                android:inputType="textPersonName"
-                android:padding="10dp" />
+    </LinearLayout>
 
-            <Button
-                android:id="@+id/chatSend"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_marginLeft="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/button_send"
-                android:text="发送"
-                android:enabled="false"
-                />
-        </LinearLayout>
-    </RelativeLayout>
-
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

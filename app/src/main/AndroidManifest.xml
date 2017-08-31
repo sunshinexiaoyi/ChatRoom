@@ -6,22 +6,25 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/app"
+        android:icon="@mipmap/icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
         <activity
             android:name=".LoginActivity"
-            android:windowSoftInputMode="adjustPan">
+            android:label="@string/app_name">
 
         </activity>
+
         <activity
             android:name=".ChatActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"> <!-- 当前窗口的内容将自动移动以便当前焦点从不被键盘覆盖和用户能总是看到输入内容的部分 -->
-
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTask" >
         </activity>
+
 
         <service
             android:name=".service.ClientService"

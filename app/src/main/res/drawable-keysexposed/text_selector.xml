@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector  xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 当组件为选中状态 -->
+    <item android:state_pressed="true">
+        <shape>
+            <solid android:color="#0ec3df" />
+            <corners android:radius="20px" />
+            <padding android:bottom="5dp"
+                     android:left="5dp"
+                     android:right="5dp"
+                     android:top="5dp" />
+        </shape>
+    </item>
+
+    <!-- 当组件为未选中状态时 -->
+    <item android:state_pressed="false">
+        <shape>
+            <solid android:color="#04d967" />
+            <corners android:radius="20px" />
+            <padding android:bottom="5dp"
+                     android:left="5dp"
+                     android:right="5dp"
+                     android:top="5dp" />
+        </shape>
+    </item>
+
+
+</selector>

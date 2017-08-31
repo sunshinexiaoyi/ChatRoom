@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector  xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 当组件为选中状态 -->
+    <item android:state_focused="true"
+        android:drawable="@drawable/edit_shape02"/>
+
+    <!-- 当组件为未选中状态时，使用login_shape02布局 -->
+    <item android:state_focused="false"
+          android:drawable="@drawable/edit_shape"/>
+
+
+</selector>

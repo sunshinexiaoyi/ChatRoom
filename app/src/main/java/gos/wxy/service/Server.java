@@ -25,7 +25,7 @@ import gos.wxy.tool.UserManager;
 /**
  * 服务器
  */
-public class Server {
+public class  Server {
     public static void main(String[] args){
        new ServerManager().run();
     }
