@@ -1,7 +1,12 @@
 package gos.wxy;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -28,11 +33,14 @@ import gos.wxy.enums.EnumEventMode;
 import gos.wxy.tool.Event;
 import gos.wxy.tool.JsonParse;
 
-import static gos.wxy.define.CommandType.COM_CHAT_SEND;
+import static gos.wxy.define.CommandType.*;
 import static gos.wxy.enums.EnumChatType.OTHER;
 import static gos.wxy.enums.EnumChatType.SELF;
+import static gos.wxy.tool.BroadcastManager.*;
+
 
 public class ChatActivity extends AppCompatActivity implements OnClickListener{
+    final String TAG = this.getClass().getSimpleName();
 
     private TextView back;
     private ImageView imgAccount;

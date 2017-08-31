@@ -116,7 +116,6 @@ public class LoginActivity extends AppCompatActivity  implements View.OnClickLis
         setContentView(R.layout.activity_main);
 
         Event.register(this);
-        setContentView(R.layout.activity_login);
        // Event.register(this);
 
         registerReceiver(broadcastReceiver,FILTER_ACTIVITY);
@@ -281,22 +280,10 @@ public class LoginActivity extends AppCompatActivity  implements View.OnClickLis
      * 发送停止服务
      */
     private void sendStopService(){
-        Log.i(TAG,"sendStopService");
         eventSend(new EventMsg(COM_SYSTEM_SERVICE_STOP,EnumEventMode.OUT));
     }
 
-    /**
-     * 保存设置信息
-     * @param user
-     */
-    private void saveSetInfo(User user){
-        LoginSetting loginSetting = getLoginSettingFromView();
-        sharedDb.setLoginSetting(loginSetting);
-        if(loginSetting.getRemember()){
-            sharedDb.setUser(user);
 
-        }
-    }
 
     private void jumpMainActivity(){
         Intent intent = new Intent(this,ChatActivity.class);
