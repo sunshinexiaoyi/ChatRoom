@@ -1,5 +1,6 @@
 package gos.wxy;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,6 +41,8 @@ import gos.wxy.enums.EnumEventMode;
 import gos.wxy.tool.Event;
 import gos.wxy.tool.JsonParse;
 
+import static gos.wxy.define.CommandType.*;
+import static gos.wxy.tool.BroadcastManager.*;
 import static gos.wxy.define.CommandType.COM_CHECK_LOGIN;
 import static gos.wxy.define.CommandType.COM_CHECK_LOGOUT;
 import static gos.wxy.define.CommandType.COM_SYSTEM_RESPOND;
@@ -72,6 +75,14 @@ public class LoginActivity extends AppCompatActivity  implements View.OnClickLis
     SharedDb sharedDb = new SharedDb(this);
     MyDBOpenHelper db;
 
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            EventMsg msg = getBroadcastMsg(intent);
+            parseEventMsg(msg);
+        }
+    };
+
     /**
      * 事件接收
      * @param msg
@@ -79,11 +90,15 @@ public class LoginActivity extends AppCompatActivity  implements View.OnClickLis
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void recvEvent(EventMsg msg){
         if(msg.getEventMode() == EnumEventMode.IN){
-            switch (msg.getCommand()){
-                case COM_SYSTEM_RESPOND:
-                    parseRespond(JsonParse.respond(msg.getData()));
-                    break;
-            }
+            parseEventMsg(msg);
+        }
+    }
+
+    private void parseEventMsg(EventMsg msg){
+        switch (msg.getCommand()){
+            case COM_SYSTEM_RESPOND:
+                parseRespond(JsonParse.respond(msg.getData()));
+                break;
         }
     }
 
@@ -101,6 +116,11 @@ public class LoginActivity extends AppCompatActivity  implements View.OnClickLis
         setContentView(R.layout.activity_main);
 
         Event.register(this);
+        setContentView(R.layout.activity_login);
+       // Event.register(this);
+
+        registerReceiver(broadcastReceiver,FILTER_ACTIVITY);
+
         initView();
 
         // Bitmap代表了一个原始的位图，并且可以对位图进行一系列的变换操作
@@ -116,7 +136,9 @@ public class LoginActivity extends AppCompatActivity  implements View.OnClickLis
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Event.unregister(this);
+        sendStopService();
+        //Event.unregister(this);
+        unregisterReceiver(broadcastReceiver);
     }
 
     private void initView(){
@@ -251,7 +273,29 @@ public class LoginActivity extends AppCompatActivity  implements View.OnClickLis
      * @param user
      */
     private void sendLogin(User user){
-        Event.send(new EventMsg(COM_CHECK_LOGIN, JSON.toJSONString(user),EnumEventMode.OUT));
+        eventSend(new EventMsg(COM_CHECK_LOGIN, JSON.toJSONString(user),EnumEventMode.OUT));
+    }
+
+
+    /**
+     * 发送停止服务
+     */
+    private void sendStopService(){
+        Log.i(TAG,"sendStopService");
+        eventSend(new EventMsg(COM_SYSTEM_SERVICE_STOP,EnumEventMode.OUT));
+    }
+
+    /**
+     * 保存设置信息
+     * @param user
+     */
+    private void saveSetInfo(User user){
+        LoginSetting loginSetting = getLoginSettingFromView();
+        sharedDb.setLoginSetting(loginSetting);
+        if(loginSetting.getRemember()){
+            sharedDb.setUser(user);
+
+        }
     }
 
     private void jumpMainActivity(){
@@ -353,6 +397,12 @@ public class LoginActivity extends AppCompatActivity  implements View.OnClickLis
             d.setCallback(null);
         }
     }
+
+    private void eventSend(EventMsg msg){
+        //Event.send(msg);
+        sendBroadcast(getIntentService(msg));
+    }
+
 
 }
 

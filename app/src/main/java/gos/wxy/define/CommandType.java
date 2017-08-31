@@ -9,8 +9,11 @@ public interface CommandType {
 
      /* 系统命令*/
     byte COM_SYSTEM_RESPOND = 1;    //回应   
+    byte COM_SYSTEM_SERVICE_START = 2;     //服务启动
+    byte COM_SYSTEM_SERVICE_STOP = 3;     //服务停止
 
-     /* 验证模块命令 */
+
+    /* 验证模块命令 */
     byte COM_CHECK_LOGIN = 10;  //登录 
     byte COM_CHECK_LOGOUT = 11; //登出
 

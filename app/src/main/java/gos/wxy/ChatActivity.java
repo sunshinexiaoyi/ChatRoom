@@ -1,7 +1,5 @@
 package gos.wxy;
 
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -45,6 +43,13 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
 
     private MsgAdapter msgAdapter;
     private List<ChatItem> msgList = new ArrayList<ChatItem>();
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            EventMsg msg = getBroadcastMsg(intent);
+            parseEventMsg(msg);
+        }
+    };
 
     /**
      * 事件接收
@@ -59,6 +64,15 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
 
                     break;
             }
+            parseEventMsg(msg);
+        }
+    }
+
+    private void parseEventMsg(EventMsg msg){
+        switch (msg.getCommand()){
+            case COM_CHAT_SEND:     //聊天信息
+                updateChatView(JsonParse.message(msg.getData()));
+                break;
         }
     }
 
@@ -76,6 +90,8 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
         setContentView(R.layout.activity_chat);
 
         Event.register(this);
+        //Event.register(this);
+        registerReceiver(broadcastReceiver,FILTER_ACTIVITY);
 
         initMsg(); // 初始写几条数据，用于测试
         initView();
@@ -92,8 +108,11 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
 
     @Override
     protected void onDestroy() {
+        Log.i(TAG,"onDestroy");
         super.onDestroy();
-        Event.unregister(this);
+        sendLogout();
+        //Event.unregister(this);
+        unregisterReceiver(broadcastReceiver);
     }
 
     private void initView(){
@@ -170,6 +189,19 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
      * @param message
      */
     private void sendMessage(Message message){
-        Event.send(new EventMsg(COM_CHAT_SEND, JSON.toJSONString(message),EnumEventMode.OUT));
+        updateChatView(message);
+        eventSend(new EventMsg(COM_CHAT_SEND, JSON.toJSONString(message),EnumEventMode.OUT));
+    }
+
+    private void eventSend(EventMsg msg){
+        //Event.send(msg);
+        sendBroadcast(getIntentService(msg));
+    }
+
+
+    private void sendLogout(){
+        Log.i(TAG,"COM_CHECK_LOGOUT");
+        eventSend(new EventMsg(COM_CHECK_LOGOUT,EnumEventMode.OUT));
+
     }
 }

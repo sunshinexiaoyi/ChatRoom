@@ -113,7 +113,7 @@ class ServerManager{
          * @param dataPackage
          */
         void parseDataPackage(DataPackage dataPackage){
-            //System.out.println(PrintInfo.INFO_RECV_COMMAND+dataPackage.getCommand());
+            System.out.println(PrintInfo.INFO_RECV_COMMAND+dataPackage.getCommand()+" ->"+dataPackage.getData());
             switch (dataPackage.getCommand()){
                 case CommandType.COM_CHECK_LOGIN:
                     User recvUser = JsonParse.user(dataPackage.getData());
@@ -176,7 +176,8 @@ class ServerManager{
                     OutputStream out =  socketUser.getSocket().getOutputStream();
                     String name = user.getName();
                     if(user.equals(socketUser.getUser())){
-                        name = PrintInfo.INFO_ME;
+                        continue;
+                       // name = PrintInfo.INFO_ME;
                     }
                     Message sendMsg = new Message(name+":"+msg.getMessage());
                     DataPackage send = new DataPackage(CommandType.COM_CHAT_SEND,JSON.toJSONString(sendMsg));
