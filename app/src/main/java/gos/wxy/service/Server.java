@@ -113,7 +113,13 @@ class ServerManager{
          * @param dataPackage
          */
         void parseDataPackage(DataPackage dataPackage){
-            System.out.println(PrintInfo.INFO_RECV_COMMAND+dataPackage.getCommand()+" ->"+dataPackage.getData());
+            StringBuilder printInfo = new StringBuilder(PrintInfo.INFO_RECV_COMMAND);
+            if(null != user){
+                printInfo.append("["+user.getName()+"]");
+            }
+            printInfo.append(" ->"+dataPackage.getData());
+            System.out.println(printInfo);
+
             switch (dataPackage.getCommand()){
                 case CommandType.COM_CHECK_LOGIN:
                     User recvUser = JsonParse.user(dataPackage.getData());
@@ -181,7 +187,7 @@ class ServerManager{
                     }
                     Message sendMsg = new Message(name+":"+msg.getMessage());
                     DataPackage send = new DataPackage(CommandType.COM_CHAT_SEND,JSON.toJSONString(sendMsg));
-                    System.out.println("给"+socketUser.getUser().getName()+"发送信息："+sendMsg.getMessage());
+                    System.out.println("给用户["+socketUser.getUser().getName()+"]发送转发信息："+sendMsg.getMessage());
                     out.write(send.toByte());
                 }
                 catch (IOException e){

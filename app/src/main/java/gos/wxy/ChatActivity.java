@@ -66,12 +66,6 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void recvEvent(EventMsg msg){
         if(msg.getEventMode() == EnumEventMode.IN){
-            switch (msg.getCommand()){
-                case COM_CHAT_SEND:     //聊天信息
-                    updateChatView(JsonParse.message(msg.getData()));
-
-                    break;
-            }
             parseEventMsg(msg);
         }
     }
@@ -79,7 +73,8 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
     private void parseEventMsg(EventMsg msg){
         switch (msg.getCommand()){
             case COM_CHAT_SEND:     //聊天信息
-                updateChatView(JsonParse.message(msg.getData()));
+                Message message = JsonParse.message(msg.getData());
+                updateChatView(new ChatItem(message.getMessage(),OTHER));
                 break;
         }
     }
@@ -163,13 +158,6 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
                     Message message = new Message(content);
                     sendMessage(message);//发送聊天信息给服务器
 
-                    ChatItem chatItem = new ChatItem(message.getMessage(),SELF);
-                    msgList.add(chatItem);
-
-                    // 当有新消息时，刷新ListView中的显示
-                    msgAdapter.notifyDataSetChanged();
-                    // 将ListView定位到最后一行
-                    listView.setSelection(msgList.size());
                     // 清空输入框中的内容
                     inputText.setText("");
                 }
@@ -180,10 +168,10 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
 
     /**
      * 更新聊天界面
-     * @param message
+     * @param chatItem
      */
-    private void updateChatView(Message message){
-        ChatItem chatItem = new ChatItem(message.getMessage(),OTHER);
+    private void updateChatView(ChatItem chatItem){
+        //ChatItem chatItem = new ChatItem(message.getMessage(),OTHER);
         msgList.add(chatItem);
 
         // 当有新消息时，刷新ListView中的显示
@@ -197,7 +185,9 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
      * @param message
      */
     private void sendMessage(Message message){
-        updateChatView(message);
+        updateChatView(new ChatItem(message.getMessage(),SELF));
+        Log.i(TAG,"sendMessage:"+message.getMessage());
+
         eventSend(new EventMsg(COM_CHAT_SEND, JSON.toJSONString(message),EnumEventMode.OUT));
     }
 
