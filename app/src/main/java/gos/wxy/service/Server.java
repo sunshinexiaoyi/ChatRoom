@@ -11,7 +11,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 
-import gos.wxy.base.Message;
+import gos.wxy.base.ChatMessage;
 import gos.wxy.base.Respond;
 import gos.wxy.base.SocketUser;
 import gos.wxy.base.User;
@@ -131,7 +131,7 @@ class ServerManager{
                             userManager.remove(existSocketUser);
                         }
 
-                        Message msg = new Message(recvUser.getName()+PrintInfo.INFO_ONLINE);
+                        ChatMessage msg = new ChatMessage(recvUser.getName()+PrintInfo.INFO_ONLINE);
                         User systemUser = new User(PrintInfo.SYSTEM_USER);
                         sendAllUser(systemUser,msg);
 
@@ -144,14 +144,14 @@ class ServerManager{
                     break;
 
                 case CommandType.COM_CHAT_SEND:
-                    Message msg = JsonParse.message(dataPackage.getData());
+                    ChatMessage msg = JsonParse.message(dataPackage.getData());
                     sendAllUser(this.user,msg);
                     break;
                 case CommandType.COM_CHECK_LOGOUT:
                     System.out.println(user.getName()+PrintInfo.INFO_LOGOUT);
                     userManager.remove(socket);
                     sendRespond(dataPackage.getCommand(),true);
-                    Message msgLogout = new Message(user.getName()+PrintInfo.INFO_OFFLINE);
+                    ChatMessage msgLogout = new ChatMessage(user.getName()+PrintInfo.INFO_OFFLINE);
                     User systemUser = new User(PrintInfo.SYSTEM_USER);
                     sendAllUser(systemUser,msgLogout);
                     break;
@@ -174,7 +174,7 @@ class ServerManager{
         /**
          * 群发
          */
-        void sendAllUser(User user,Message msg){
+        void sendAllUser(User user,ChatMessage msg){
             ArrayList<SocketUser> socketUsers = userManager.getSocketUsers();
             for (SocketUser  socketUser:
                     socketUsers) {
@@ -185,7 +185,7 @@ class ServerManager{
                         continue;
                        // name = PrintInfo.INFO_ME;
                     }
-                    Message sendMsg = new Message(name+":"+msg.getMessage());
+                    ChatMessage sendMsg = new ChatMessage(name+":"+msg.getMessage());
                     DataPackage send = new DataPackage(CommandType.COM_CHAT_SEND,JSON.toJSONString(sendMsg));
                     System.out.println("给用户["+socketUser.getUser().getName()+"]发送转发信息："+sendMsg.getMessage());
                     out.write(send.toByte());

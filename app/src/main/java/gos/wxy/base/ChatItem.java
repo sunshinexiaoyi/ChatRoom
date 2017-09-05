@@ -6,7 +6,7 @@ import gos.wxy.enums.EnumChatType;
  * Created by wuxy on 2017/8/17.
  */
 
-public class ChatItem extends Message{
+public class ChatItem extends ChatMessage {
     EnumChatType chatType;
 
     public ChatItem() {

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -30,8 +33,8 @@ import java.util.List;
 
 import gos.wxy.adapter.MsgAdapter;
 import gos.wxy.base.ChatItem;
+import gos.wxy.base.ChatMessage;
 import gos.wxy.base.EventMsg;
-import gos.wxy.base.Message;
 import gos.wxy.enums.EnumEventMode;
 import gos.wxy.tool.Event;
 import gos.wxy.tool.JsonParse;
@@ -45,6 +48,7 @@ import static gos.wxy.tool.BroadcastManager.getBroadcastMsg;
 import static gos.wxy.tool.BroadcastManager.getIntentService;
 
 
+
 public class ChatActivity extends AppCompatActivity implements OnClickListener{
     final String TAG = this.getClass().getSimpleName();
 
@@ -56,6 +60,8 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
     private Button sendMessage;
     private ListView listView;
 
+    private ScaleAnimation animation;
+
     private MsgAdapter msgAdapter;
     private List<ChatItem> msgList = new ArrayList<ChatItem>();
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -63,6 +69,19 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
         public void onReceive(Context context, Intent intent) {
             EventMsg msg = getBroadcastMsg(intent);
             parseEventMsg(msg);
+        }
+    };
+
+    private Handler mHandler = new Handler()
+    {
+        public void handleMessage(Message message) {
+            super.handleMessage(message);
+            switch (message.what) {
+                case 1:
+                    emoticonImag.setVisibility(View.GONE);
+                    emoticonImag.clearAnimation();
+                    break;
+            }
         }
     };
 
@@ -80,7 +99,7 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
     private void parseEventMsg(EventMsg msg){
         switch (msg.getCommand()){
             case COM_CHAT_SEND:     //聊天信息
-                Message message = JsonParse.message(msg.getData());
+                ChatMessage message = JsonParse.message(msg.getData());
                 updateChatView(new ChatItem(message.getMessage(),OTHER));
                 break;
         }
@@ -123,6 +142,9 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
         sendLogout();
         //Event.unregister(this);
         unregisterReceiver(broadcastReceiver);
+        emoticonImag.clearAnimation();
+        emoticonImag.setVisibility(View.GONE);
+
     }
 
     private void initView(){
@@ -151,13 +173,16 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(inputText.getText().toString().length() > 0) {
-                    sendMessage.setEnabled(true);
-                }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+                if(s.length() > 0) {
+                    sendMessage.setEnabled(true);
+                } else {
+                    sendMessage.setEnabled(false);
+                }
+
             }
         });
 
@@ -175,18 +200,21 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
                 Toast.makeText(this, "我是" + name, Toast.LENGTH_SHORT).show();
                 break;
             case R.id.emoticon:
-                Toast.makeText(this, "小情绪", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "小情绪", Toast.LENGTH_SHORT).show();
 
-                AlphaAnimation animation = new AlphaAnimation(0.0f, 1.0f);
-                animation.setDuration(5000);
+                emoticonImag.setVisibility(View.VISIBLE);
+                animation = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f);
+                animation.setDuration(1000);
                 animation.setRepeatMode(AlphaAnimation.REVERSE);
-                animation.setRepeatCount(AlphaAnimation.INFINITE);
-                emoticonImag.setAnimation(animation);
+                animation.setRepeatCount(0);
+                emoticonImag.startAnimation(animation);
+
+                mHandler.sendEmptyMessageDelayed(1, 1000);
                 break;
             case R.id.sendMessage:
                 String content = inputText.getText().toString();
                 if(! "".equals(content)) {
-                    Message message = new Message(content);
+                    ChatMessage message = new ChatMessage(content);
                     sendMessage(message);//发送聊天信息给服务器
 
                     // 清空输入框中的内容
@@ -215,7 +243,7 @@ public class ChatActivity extends AppCompatActivity implements OnClickListener{
      * 发送聊天信息
      * @param message
      */
-    private void sendMessage(Message message){
+    private void sendMessage(ChatMessage message){
         updateChatView(new ChatItem(message.getMessage(),SELF));
         Log.i(TAG,"sendMessage:"+message.getMessage());
 
